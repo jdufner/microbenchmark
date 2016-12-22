@@ -32,21 +32,28 @@
 package de.jdufner.microbenchmark;
 
 import org.junit.Test;
-import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.sqrt;
 
+@Warmup(iterations = 3, time = 3, timeUnit = TimeUnit.SECONDS) // Default = 10 iterations
+@Measurement(iterations = 3, time = 5, timeUnit = TimeUnit.SECONDS) // Default = 10 iterations
+@State(Scope.Benchmark) // Steuert die Wiederverwendung der Instanzvariablen
+@Fork(value = 3)
+@Timeout(time =  10, timeUnit = TimeUnit.SECONDS)
 public class MyBenchmark {
+
+  private final int max = 10000;
 
   @Benchmark
   @Test
   public void primes() {
     List<Integer> primzahlen = new ArrayList<>();
     int divisionCounter = 0;
-    int max = 1000000;
     for (int divisor = 2; divisor < max; divisor++) {
       boolean istPrimzahl = true;
       int wurzel = (int) sqrt(divisor);
@@ -70,7 +77,6 @@ public class MyBenchmark {
   public void primes2() {
     List<Integer> primzahlen = new ArrayList<>();
     int divisionCounter = 0;
-    int max = 1000000;
     for (int divisor = 2; divisor < max; divisor++) {
       boolean istPrimzahl = true;
       int wurzel = (int) sqrt(divisor);
